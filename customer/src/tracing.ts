@@ -15,6 +15,10 @@ import { AsyncLocalStorageContextManager } from '@opentelemetry/context-async-ho
 import { KafkaJsInstrumentation } from 'opentelemetry-instrumentation-kafkajs';
 
 import * as process from 'process';
+import { JaegerExporter } from '@opentelemetry/exporter-jaeger';
+import { PinoInstrumentation } from '@opentelemetry/instrumentation-pino';
+import { NestInstrumentation } from '@opentelemetry/instrumentation-nestjs-core';
+import { ExpressInstrumentation } from '@opentelemetry/instrumentation-express';
 
 const otelSDK = new NodeSDK({
   metricReader: new PrometheusExporter({
@@ -22,8 +26,9 @@ const otelSDK = new NodeSDK({
   }),
   serviceName: 'customer',
   spanProcessor: new BatchSpanProcessor(
-    new OTLPTraceExporter({
-      url: 'localhost:6832',
+    new JaegerExporter({
+      host: 'localhost',
+      port: 6832,
     }),
   ),
   contextManager: new AsyncLocalStorageContextManager(),
@@ -39,7 +44,8 @@ const otelSDK = new NodeSDK({
     ],
   }),
   instrumentations: [
-    getNodeAutoInstrumentations(),
+    new NestInstrumentation(),
+    new ExpressInstrumentation(),
     new KafkaJsInstrumentation(),
   ],
 });

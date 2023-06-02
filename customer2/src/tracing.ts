@@ -1,6 +1,5 @@
 import { CompositePropagator } from '@opentelemetry/core';
 import { BatchSpanProcessor } from '@opentelemetry/sdk-trace-base';
-import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http';
 import { PrometheusExporter } from '@opentelemetry/exporter-prometheus';
 
 import { getNodeAutoInstrumentations } from '@opentelemetry/auto-instrumentations-node';
@@ -8,16 +7,16 @@ import { JaegerPropagator } from '@opentelemetry/propagator-jaeger';
 import { NodeSDK } from '@opentelemetry/sdk-node';
 import { AsyncLocalStorageContextManager } from '@opentelemetry/context-async-hooks';
 import { KafkaJsInstrumentation } from 'opentelemetry-instrumentation-kafkajs';
+import { JaegerExporter } from '@opentelemetry/exporter-jaeger';
 
 const otelSDK = new NodeSDK({
   metricReader: new PrometheusExporter({ port: 9466 }),
   serviceName: 'customer2',
   spanProcessor: new BatchSpanProcessor(
-    new OTLPTraceExporter(
-      new OTLPTraceExporter({
-        url: 'localhost:6832',
-      }),
-    ),
+    new JaegerExporter({
+      host: 'localhost',
+      port: 6832,
+    }),
   ),
   contextManager: new AsyncLocalStorageContextManager(),
   textMapPropagator: new CompositePropagator({

@@ -1,12 +1,20 @@
-import { Module } from '@nestjs/common';
+import { Module, RequestMethod } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { OpenTelemetryModule } from 'nestjs-otel';
-import { loggerOptions } from './options';
 import { LoggerModule } from 'nestjs-pino';
+import { HttpModule } from '@nestjs/axios';
+import { logger } from './pino';
+import { LoggerModule as PinoLoggerModule } from 'nestjs-pino';
 
 @Module({
   imports: [
+    PinoLoggerModule.forRoot({
+      pinoHttp: {
+        logger: logger,
+      },
+      exclude: [{ method: RequestMethod.ALL, path: 'health' }],
+    }),
     OpenTelemetryModule.forRoot({
       metrics: {
         hostMetrics: true,
@@ -15,7 +23,6 @@ import { LoggerModule } from 'nestjs-pino';
         },
       },
     }),
-    LoggerModule.forRoot({ ...loggerOptions }),
   ],
   controllers: [AppController],
   providers: [AppService],

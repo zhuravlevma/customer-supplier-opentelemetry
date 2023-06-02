@@ -1,5 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { ClientKafka } from '@nestjs/microservices';
+import { OtelMethodCounter, Span, TraceService } from 'nestjs-otel';
 
 @Injectable()
 export class AppService {
@@ -9,12 +10,15 @@ export class AppService {
     await this.kafka.connect();
   }
 
+  @Span('findOne section')
   async getHello(): Promise<string> {
     const promise = new Promise((res, rej) => {
       setTimeout(() => {
         res('World');
       }, Math.floor(Math.random() * (3000 - 500 + 1)) + 500);
     });
+
+    console.log('test');
 
     const [value] = (await Promise.all([promise])) as string[];
 

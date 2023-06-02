@@ -4,7 +4,9 @@ import {
   W3CBaggagePropagator,
 } from '@opentelemetry/core';
 import { BatchSpanProcessor } from '@opentelemetry/sdk-trace-base';
+// import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http';
 import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http';
+
 import { HttpInstrumentation } from '@opentelemetry/instrumentation-http';
 import { JaegerPropagator } from '@opentelemetry/propagator-jaeger';
 import { B3InjectEncoding, B3Propagator } from '@opentelemetry/propagator-b3';
@@ -12,7 +14,12 @@ import { PrometheusExporter } from '@opentelemetry/exporter-prometheus';
 import { NodeSDK } from '@opentelemetry/sdk-node';
 import { AsyncLocalStorageContextManager } from '@opentelemetry/context-async-hooks';
 import * as process from 'process';
+import { JaegerExporter } from '@opentelemetry/exporter-jaeger';
+import { getNodeAutoInstrumentations } from '@opentelemetry/auto-instrumentations-node';
+
 import { ExpressInstrumentation } from '@opentelemetry/instrumentation-express';
+import { PinoInstrumentation } from '@opentelemetry/instrumentation-pino';
+import { NestInstrumentation } from '@opentelemetry/instrumentation-nestjs-core';
 
 const otelSDK = new NodeSDK({
   metricReader: new PrometheusExporter({
@@ -20,8 +27,10 @@ const otelSDK = new NodeSDK({
   }),
   serviceName: 'supplier',
   spanProcessor: new BatchSpanProcessor(
-    new OTLPTraceExporter({
-      url: 'localhost:6832',
+    new JaegerExporter({
+      //   url: 'http://localhost:6832',
+      host: 'localhost',
+      port: 6832,
     }),
   ),
   contextManager: new AsyncLocalStorageContextManager(),
@@ -36,7 +45,7 @@ const otelSDK = new NodeSDK({
       }),
     ],
   }),
-  instrumentations: [new HttpInstrumentation(), new ExpressInstrumentation()],
+  instrumentations: [new ExpressInstrumentation(), new NestInstrumentation()],
 });
 
 export default otelSDK;
