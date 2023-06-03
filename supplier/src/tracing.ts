@@ -28,7 +28,7 @@ const otelSDK = new NodeSDK({
   serviceName: 'supplier',
   spanProcessor: new BatchSpanProcessor(
     new JaegerExporter({
-      endpoint: 'http://jaeger:14268/api/traces',
+      endpoint: 'http://tempo:14268/api/traces',
     }),
   ),
   contextManager: new AsyncLocalStorageContextManager(),

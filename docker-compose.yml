@@ -1,19 +1,19 @@
 version: '3.8'
 services:
-  jaeger:
-    image: jaegertracing/all-in-one:latest
-    ports:
-      - 6831:6831/udp
-      - 6832:6832/udp
-      - 16686:16686
-      - 5778:5778
-      - 4317:4317
-      - 4318:4318
-      - 14250:14250
-      - 14268:14268
-      - 14269:14269
-      - 9411:9411
-    hostname: jaeger
+  # jaeger:
+  #   image: jaegertracing/all-in-one:latest
+  #   ports:
+  #     - 6831:6831/udp
+  #     - 6832:6832/udp
+  #     - 16686:16686
+  #     - 5778:5778
+  #     - 4317:4317
+  #     - 4318:4318
+  #     - 14250:14250
+  #     - 14268:14268
+  #     - 14269:14269
+  #     - 9411:9411
+  #   hostname: jaeger
   prometheus:
     image: prom/prometheus:latest
     volumes:
@@ -30,10 +30,9 @@ services:
       context: ./supplier
       dockerfile: ./Dockerfile
     ports:
-      - 3000:3000
+      - 9001:9001
       - 9464:9464
     depends_on:
-      - jaeger
       - kafka
     restart: on-failure
   nestjs-customer:
@@ -44,7 +43,6 @@ services:
       - 4000:4000
       - 9465:9465
     depends_on:
-      - jaeger
       - kafka
       - nestjs-supplier
       - nestjs-customer2
@@ -57,7 +55,6 @@ services:
       - 9000:9000
       - 9466:9466
     depends_on:
-      - jaeger
       - kafka
     restart: on-failure
 
@@ -82,6 +79,86 @@ services:
       - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092
     depends_on:
       - zookeeper
+
+  tempo:
+    image: grafana/tempo:latest
+    command: ["-config.file=/etc/tempo.yaml"]
+    volumes:
+      - ./etc/tempo-local.yaml:/etc/tempo.yaml
+      - ./data/tempo-data:/tmp/tempo
+    ports:
+      - "14268"      # jaeger ingest, Jaeger - Thrift HTTP
+      - "14250"      # Jaeger - GRPC
+      - "55680"      # OpenTelemetry
+      - "3100"       # tempo
+      - "6831/udp"   # Jaeger - Thrift Compact
+      - "6832/udp"   # Jaeger - Thrift Binary
+
+  promtail:
+    image: grafana/promtail:latest
+    command: -config.file=/etc/promtail/promtail-local.yaml
+    volumes:
+      - ./etc/promtail-local.yaml:/etc/promtail/promtail-local.yaml
+      - ./data/logs:/app/logs
+    depends_on:
+      - nestjs-supplier
+      - nestjs-customer
+      - nestjs-customer2
+      - loki
+
+  tempo-query:
+    image: grafana/tempo-query:latest
+    command: ["--grpc-storage-plugin.configuration-file=/etc/tempo-query.yaml"]
+    volumes:
+      - ./etc/tempo-query.yaml:/etc/tempo-query.yaml
+    ports:
+      - "16686:16686"  # jaeger-ui
+    depends_on:
+      - tempo
+
+  loki:
+    image: grafana/loki:latest
+    command: -config.file=/etc/loki/loki-local.yaml
+    ports:
+      - "3101:3100"                                   # loki needs to be exposed so it receives logs
+    environment:
+      - JAEGER_AGENT_HOST=tempo
+      - JAEGER_ENDPOINT=http://tempo:14268/api/traces # send traces to Tempo
+      - JAEGER_AGENT_PORT=14268
+      - JAEGER_SAMPLER_TYPE=const
+      - JAEGER_SAMPLER_PARAM=1
+    volumes:
+      - ./etc/loki-local.yaml:/etc/loki/loki-local.yaml
+      - ./data/loki-data:/tmp/loki
+
+  volume_exporter:
+    image: mnadeem/volume_exporter
+    command: ["--volume-dir=tempo:/tmp/tempo", "--volume-dir=logs:/app/logs", "--volume-dir=loki:/tmp/loki"]
+    volumes:
+      - ./data/logs:/app/logs
+      - ./data/tempo-data:/tmp/tempo
+      - ./data/loki-data:/tmp/loki
+    ports:
+      - 9889:9888
+
+  grafana:
+    image: grafana/grafana:latest
+    volumes:
+      - ./data/grafana-data/datasources:/etc/grafana/provisioning/datasources
+      - ./data/grafana-data/dashboards-provisioning:/etc/grafana/provisioning/dashboards
+      - ./data/grafana-data/dashboards:/var/lib/grafana/dashboards
+    environment:
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+      - GF_AUTH_DISABLE_LOGIN_FORM=true
+    ports:
+      - "3000:3000"
+    depends_on:
+      - prometheus
+      - tempo-query
+      - loki
+      - volume_exporter
+
 
 volumes:
   zookeeper_data:

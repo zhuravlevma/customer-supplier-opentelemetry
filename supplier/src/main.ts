@@ -10,6 +10,6 @@ async function bootstrap() {
   app.useLogger(app.get(Logger));
   app.enableShutdownHooks();
   app.enableCors({ origin: '*' });
-  await app.listen(3000);
+  await app.listen(9001);
 }
 bootstrap();
