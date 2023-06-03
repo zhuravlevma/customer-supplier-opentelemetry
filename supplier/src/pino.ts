@@ -10,6 +10,9 @@ export const loggerOptions: LoggerOptions = {
       const { spanId, traceId } = trace
         .getSpan(context.active())
         ?.spanContext();
+
+      console.log({ ...object, spanId, traceId });
+
       return { ...object, spanId, traceId };
     },
   },

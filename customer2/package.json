@@ -27,6 +27,7 @@
     "@opentelemetry/auto-instrumentations-node": "^0.37.0",
     "@opentelemetry/exporter-jaeger": "^1.13.0",
     "@opentelemetry/exporter-prometheus": "^0.39.1",
+    "@opentelemetry/instrumentation-nestjs-core": "^0.32.4",
     "@opentelemetry/sdk-node": "^0.39.1",
     "kafkajs": "^2.2.4",
     "nestjs-otel": "^5.1.2",

@@ -1,6 +1,6 @@
 FROM node:18-alpine
 EXPOSE 3000
-EXPOSE 9464
+EXPOSE 9466
 
 RUN mkdir /app && chown -R node:node /app
 

@@ -3,41 +3,88 @@ services:
   jaeger:
     image: jaegertracing/all-in-one:latest
     ports:
-      - "6832:6832/udp"
-      - "16686:16686"
+      - 6831:6831/udp
+      - 6832:6832/udp
+      - 16686:16686
+      - 5778:5778
+      - 4317:4317
+      - 4318:4318
+      - 14250:14250
+      - 14268:14268
+      - 14269:14269
+      - 9411:9411
     hostname: jaeger
   prometheus:
     image: prom/prometheus:latest
-    hostname: prometheus
     volumes:
-      - ./prom/prom.yaml:/etc/prometheus.yaml
+      - ./etc/prometheus.yaml:/etc/prometheus.yaml
     entrypoint:
       - /bin/prometheus
       - --config.file=/etc/prometheus.yaml
     ports:
       - "9090:9090"
+    hostname: prometheus
+
+  nestjs-supplier:
+    build:
+      context: ./supplier
+      dockerfile: ./Dockerfile
+    ports:
+      - 3000:3000
+      - 9464:9464
+    depends_on:
+      - jaeger
+      - kafka
+    restart: on-failure
+  nestjs-customer:
+    build:
+      context: ./customer
+      dockerfile: ./Dockerfile
+    ports:
+      - 4000:4000
+      - 9465:9465
+    depends_on:
+      - jaeger
+      - kafka
+      - nestjs-supplier
+      - nestjs-customer2
+    restart: on-failure
+  nestjs-customer2:
+    build:
+      context: ./customer2
+      dockerfile: ./Dockerfile
+    ports:
+      - 9000:9000
+      - 9466:9466
+    depends_on:
+      - jaeger
+      - kafka
+    restart: on-failure
+
   zookeeper:
-    image: confluentinc/cp-zookeeper:latest
-    restart: "no"
+    image: docker.io/bitnami/zookeeper:3.8
     ports:
       - "2181:2181"
+    volumes:
+      - "zookeeper_data:/bitnami"
     environment:
-      ZOOKEEPER_CLIENT_PORT: 2181
-      ZOOKEEPER_TICK_TIME: 2000
+      - ALLOW_ANONYMOUS_LOGIN=yes
   kafka:
-    image: confluentinc/cp-kafka:latest
-    restart: "no"
-    hostname: kafka
+    image: docker.io/bitnami/kafka:3.4
     ports:
       - "9092:9092"
+    volumes:
+      - "kafka_data:/bitnami"
     environment:
-      KAFKA_BROKER_ID: 1
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
-      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
-      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      - ALLOW_PLAINTEXT_LISTENER=yes
+      - KAFKA_ENABLE_KRAFT=no
+      - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
+      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092
     depends_on:
       - zookeeper
+
+volumes:
+  zookeeper_data:
+    driver: local
+  kafka_data:
+    driver: local

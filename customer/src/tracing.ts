@@ -3,7 +3,11 @@ import {
   W3CTraceContextPropagator,
   W3CBaggagePropagator,
 } from '@opentelemetry/core';
-import { BatchSpanProcessor } from '@opentelemetry/sdk-trace-base';
+import {
+  BatchSpanProcessor,
+  ConsoleSpanExporter,
+  SimpleSpanProcessor,
+} from '@opentelemetry/sdk-trace-base';
 import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http';
 import { PrometheusExporter } from '@opentelemetry/exporter-prometheus';
 
@@ -19,16 +23,20 @@ import { JaegerExporter } from '@opentelemetry/exporter-jaeger';
 import { PinoInstrumentation } from '@opentelemetry/instrumentation-pino';
 import { NestInstrumentation } from '@opentelemetry/instrumentation-nestjs-core';
 import { ExpressInstrumentation } from '@opentelemetry/instrumentation-express';
+import { HttpInstrumentation } from '@opentelemetry/instrumentation-http';
+import { SemanticResourceAttributes } from '@opentelemetry/semantic-conventions';
+import { Resource } from '@opentelemetry/resources';
 
 const otelSDK = new NodeSDK({
   metricReader: new PrometheusExporter({
     port: 9465,
   }),
-  serviceName: 'customer',
+  resource: new Resource({
+    [SemanticResourceAttributes.SERVICE_NAME]: `customer`,
+  }),
   spanProcessor: new BatchSpanProcessor(
     new JaegerExporter({
-      host: 'localhost',
-      port: 6832,
+      endpoint: 'http://jaeger:14268/api/traces',
     }),
   ),
   contextManager: new AsyncLocalStorageContextManager(),
@@ -44,9 +52,11 @@ const otelSDK = new NodeSDK({
     ],
   }),
   instrumentations: [
+    new HttpInstrumentation(),
     new NestInstrumentation(),
     new ExpressInstrumentation(),
     new KafkaJsInstrumentation(),
+    new PinoInstrumentation(),
   ],
 });
 

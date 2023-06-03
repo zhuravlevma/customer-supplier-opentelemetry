@@ -1,7 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { ClientKafka } from '@nestjs/microservices';
-import { OtelMethodCounter, Span, TraceService } from 'nestjs-otel';
-
 @Injectable()
 export class AppService {
   constructor(@Inject('kafka') private readonly kafka: ClientKafka) {}
@@ -10,7 +8,6 @@ export class AppService {
     await this.kafka.connect();
   }
 
-  @Span('findOne section')
   async getHello(): Promise<string> {
     const promise = new Promise((res, rej) => {
       setTimeout(() => {

@@ -2,24 +2,22 @@ import { Injectable } from '@nestjs/common';
 import { PinoLogger } from 'nestjs-pino';
 import axios from 'axios';
 import { HttpService } from '@nestjs/axios';
+import { OtelMethodCounter, Span, TraceService } from 'nestjs-otel';
 
 @Injectable()
 export class AppService {
   constructor(private readonly logger: PinoLogger) {}
 
-  //   async getHello(greeting = 'Hello'): Promise<string> {
-  //     this.logger.info({ msg: 'Hello method', data: { message: greeting } });
+  //   @Span('test')
+  async getHello(greeting = 'Hello'): Promise<string> {
+    this.logger.info({ msg: 'Hello method', data: { message: greeting } });
+    console.log('dwdw');
 
-  //     // const res = await axios.get('http://127.0.0.1:4000/world');
-  //     console.log('dwdw');
-
-  //     const { data } = await this.httpService
-  //       .get('/world', { baseURL: '127.0.0.1:4000' })
-  //       .toPromise();
-  //     return `${greeting} ${data}`;
-  //   }
+    const { data } = await axios.get('http://nestjs-customer:4000/world');
+    return `${greeting} ${data}`;
+  }
 
   get(): string {
-    return 'Hello World!';
+    return 'Hello World!2323323';
   }
 }

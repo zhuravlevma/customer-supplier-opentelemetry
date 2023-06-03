@@ -4,10 +4,6 @@ import {
   W3CBaggagePropagator,
 } from '@opentelemetry/core';
 import { BatchSpanProcessor } from '@opentelemetry/sdk-trace-base';
-// import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http';
-import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http';
-
-import { HttpInstrumentation } from '@opentelemetry/instrumentation-http';
 import { JaegerPropagator } from '@opentelemetry/propagator-jaeger';
 import { B3InjectEncoding, B3Propagator } from '@opentelemetry/propagator-b3';
 import { PrometheusExporter } from '@opentelemetry/exporter-prometheus';
@@ -15,22 +11,24 @@ import { NodeSDK } from '@opentelemetry/sdk-node';
 import { AsyncLocalStorageContextManager } from '@opentelemetry/context-async-hooks';
 import * as process from 'process';
 import { JaegerExporter } from '@opentelemetry/exporter-jaeger';
-import { getNodeAutoInstrumentations } from '@opentelemetry/auto-instrumentations-node';
-
 import { ExpressInstrumentation } from '@opentelemetry/instrumentation-express';
 import { PinoInstrumentation } from '@opentelemetry/instrumentation-pino';
 import { NestInstrumentation } from '@opentelemetry/instrumentation-nestjs-core';
+import { HttpInstrumentation } from '@opentelemetry/instrumentation-http';
+import { SemanticResourceAttributes } from '@opentelemetry/semantic-conventions';
+import { Resource } from '@opentelemetry/resources';
 
 const otelSDK = new NodeSDK({
+  resource: new Resource({
+    [SemanticResourceAttributes.SERVICE_NAME]: `supplier`,
+  }),
   metricReader: new PrometheusExporter({
     port: 9464,
   }),
   serviceName: 'supplier',
   spanProcessor: new BatchSpanProcessor(
     new JaegerExporter({
-      //   url: 'http://localhost:6832',
-      host: 'localhost',
-      port: 6832,
+      endpoint: 'http://jaeger:14268/api/traces',
     }),
   ),
   contextManager: new AsyncLocalStorageContextManager(),
@@ -45,7 +43,12 @@ const otelSDK = new NodeSDK({
       }),
     ],
   }),
-  instrumentations: [new ExpressInstrumentation(), new NestInstrumentation()],
+  instrumentations: [
+    new HttpInstrumentation(),
+    new ExpressInstrumentation(),
+    new NestInstrumentation(),
+    new PinoInstrumentation(),
+  ],
 });
 
 export default otelSDK;

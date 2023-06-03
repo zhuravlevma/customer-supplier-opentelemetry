@@ -1,21 +1,23 @@
 import { CompositePropagator } from '@opentelemetry/core';
 import { BatchSpanProcessor } from '@opentelemetry/sdk-trace-base';
 import { PrometheusExporter } from '@opentelemetry/exporter-prometheus';
+import { PinoInstrumentation } from '@opentelemetry/instrumentation-pino';
 
-import { getNodeAutoInstrumentations } from '@opentelemetry/auto-instrumentations-node';
 import { JaegerPropagator } from '@opentelemetry/propagator-jaeger';
 import { NodeSDK } from '@opentelemetry/sdk-node';
 import { AsyncLocalStorageContextManager } from '@opentelemetry/context-async-hooks';
 import { KafkaJsInstrumentation } from 'opentelemetry-instrumentation-kafkajs';
 import { JaegerExporter } from '@opentelemetry/exporter-jaeger';
+import { NestInstrumentation } from '@opentelemetry/instrumentation-nestjs-core';
+import { ExpressInstrumentation } from '@opentelemetry/instrumentation-express';
+import { HttpInstrumentation } from '@opentelemetry/instrumentation-http';
 
 const otelSDK = new NodeSDK({
   metricReader: new PrometheusExporter({ port: 9466 }),
   serviceName: 'customer2',
   spanProcessor: new BatchSpanProcessor(
     new JaegerExporter({
-      host: 'localhost',
-      port: 6832,
+      endpoint: 'http://jaeger:14268/api/traces',
     }),
   ),
   contextManager: new AsyncLocalStorageContextManager(),
@@ -23,8 +25,11 @@ const otelSDK = new NodeSDK({
     propagators: [new JaegerPropagator()],
   }),
   instrumentations: [
-    getNodeAutoInstrumentations(),
+    new HttpInstrumentation(),
+    new NestInstrumentation(),
+    new ExpressInstrumentation(),
     new KafkaJsInstrumentation(),
+    new PinoInstrumentation(),
   ],
 });
 

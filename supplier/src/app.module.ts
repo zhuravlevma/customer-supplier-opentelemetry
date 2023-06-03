@@ -13,16 +13,16 @@ import { LoggerModule as PinoLoggerModule } from 'nestjs-pino';
       pinoHttp: {
         logger: logger,
       },
-      exclude: [{ method: RequestMethod.ALL, path: 'health' }],
+      //   exclude: [{ method: RequestMethod.ALL, path: 'health' }],
     }),
-    OpenTelemetryModule.forRoot({
-      metrics: {
-        hostMetrics: true,
-        apiMetrics: {
-          enable: true,
-        },
-      },
-    }),
+    // OpenTelemetryModule.forRoot({
+    //   metrics: {
+    //     hostMetrics: true,
+    //     apiMetrics: {
+    //       enable: true,
+    //     },
+    //   },
+    // }),
   ],
   controllers: [AppController],
   providers: [AppService],
