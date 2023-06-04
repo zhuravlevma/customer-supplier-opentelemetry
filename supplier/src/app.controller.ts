@@ -10,6 +10,7 @@ export class AppController {
 
   @Get('hello')
   getHello(): Promise<string> {
+    this.logger.log('Calling getHello()', AppController.name);
     return this.appService.getHello();
   }
 

@@ -45,8 +45,11 @@ services:
     ports:
       - 9001:9001
       - 9464:9464
+    volumes:
+      - ./data/logs:/app/logs
     depends_on:
       - kafka
+      - tempo-query
     restart: on-failure
   nestjs-customer:
     build:
@@ -55,10 +58,13 @@ services:
     ports:
       - 4000:4000
       - 9465:9465
+    volumes:
+      - ./data/logs:/app/logs
     depends_on:
       - kafka
       - nestjs-supplier
       - nestjs-customer2
+      - tempo-query
     restart: on-failure
   nestjs-customer2:
     build:
@@ -69,6 +75,9 @@ services:
       - 9466:9466
     depends_on:
       - kafka
+      - tempo-query
+    volumes:
+      - ./data/logs:/app/logs
     restart: on-failure
 
   zookeeper:
@@ -104,6 +113,7 @@ services:
       - "14250"      # Jaeger - GRPC
       - "55680"      # OpenTelemetry
       - "3100"       # tempo
+      - "16686"
       - "6831/udp"   # Jaeger - Thrift Compact
       - "6832/udp"   # Jaeger - Thrift Binary
 

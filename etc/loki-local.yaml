@@ -6,6 +6,7 @@ server:
 ingester:
   wal:
     enabled: false
+    dir: /etc/wal
   lifecycler:
     address: 127.0.0.1
     ring:

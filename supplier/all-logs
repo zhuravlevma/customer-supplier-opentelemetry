@@ -1,0 +1,66 @@
+c[[90m9:49:38 PM[0m] Starting compilation in watch mode...
+
+[[90m9:49:39 PM[0m] Found 0 errors. Watching for file changes.
+
+[32m[Nest] 62550  - [39m06/04/2023, 9:49:40 PM [32m    LOG[39m [38;5;3m[NestFactory] [39m[32mStarting Nest application...[39m
+[32m[Nest] 62550  - [39m06/04/2023, 9:49:40 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mLoggerModule dependencies initialized[39m[38;5;3m +9ms[39m
+[32m[Nest] 62550  - [39m06/04/2023, 9:49:40 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAppModule dependencies initialized[39m[38;5;3m +0ms[39m
+[21:49:40.242] INFO (62550): AppController {/}:
+    context: "RoutesResolver"
+[21:49:40.244] INFO (62550): Mapped {/hello, GET} route
+    context: "RouterExplorer"
+[21:49:40.244] INFO (62550): Mapped {/, GET} route
+    context: "RouterExplorer"
+[21:49:40.245] INFO (62550): Nest application successfully started
+    context: "NestApplication"
+[21:49:40.248] ERROR (62550): Error: listen EADDRINUSE: address already in use :::9001
+    context: "NestApplication"
+c[[90m9:49:49 PM[0m] Starting compilation in watch mode...
+
+[[90m9:49:50 PM[0m] Found 0 errors. Watching for file changes.
+
+[32m[Nest] 62620  - [39m06/04/2023, 9:49:51 PM [32m    LOG[39m [38;5;3m[NestFactory] [39m[32mStarting Nest application...[39m
+[32m[Nest] 62620  - [39m06/04/2023, 9:49:51 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mLoggerModule dependencies initialized[39m[38;5;3m +9ms[39m
+[32m[Nest] 62620  - [39m06/04/2023, 9:49:51 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAppModule dependencies initialized[39m[38;5;3m +0ms[39m
+[21:49:51.145] INFO (62620): AppController {/}:
+    context: "RoutesResolver"
+[21:49:51.146] INFO (62620): Mapped {/hello, GET} route
+    context: "RouterExplorer"
+[21:49:51.147] INFO (62620): Mapped {/, GET} route
+    context: "RouterExplorer"
+[21:49:51.148] INFO (62620): Nest application successfully started
+    context: "NestApplication"
+[21:49:51.150] ERROR (62620): Error: listen EADDRINUSE: address already in use :::9001
+    context: "NestApplication"
+c[[90m9:50:18 PM[0m] Starting compilation in watch mode...
+
+[[90m9:50:19 PM[0m] Found 0 errors. Watching for file changes.
+
+[32m[Nest] 63239  - [39m06/04/2023, 9:50:20 PM [32m    LOG[39m [38;5;3m[NestFactory] [39m[32mStarting Nest application...[39m
+[32m[Nest] 63239  - [39m06/04/2023, 9:50:20 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mLoggerModule dependencies initialized[39m[38;5;3m +8ms[39m
+[32m[Nest] 63239  - [39m06/04/2023, 9:50:20 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAppModule dependencies initialized[39m[38;5;3m +1ms[39m
+[21:50:20.387] INFO (63239): AppController {/}:
+    context: "RoutesResolver"
+[21:50:20.389] INFO (63239): Mapped {/hello, GET} route
+    context: "RouterExplorer"
+[21:50:20.389] INFO (63239): Mapped {/, GET} route
+    context: "RouterExplorer"
+[21:50:20.390] INFO (63239): Nest application successfully started
+    context: "NestApplication"
+[21:50:20.393] ERROR (63239): Error: listen EADDRINUSE: address already in use :::9001
+    context: "NestApplication"
+c[[90m9:51:46 PM[0m] Starting compilation in watch mode...
+
+[[90m9:51:48 PM[0m] Found 0 errors. Watching for file changes.
+
+[32m[Nest] 63395  - [39m06/04/2023, 9:51:48 PM [32m    LOG[39m [38;5;3m[NestFactory] [39m[32mStarting Nest application...[39m
+[32m[Nest] 63395  - [39m06/04/2023, 9:51:48 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mLoggerModule dependencies initialized[39m[38;5;3m +8ms[39m
+[32m[Nest] 63395  - [39m06/04/2023, 9:51:48 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAppModule dependencies initialized[39m[38;5;3m +0ms[39m
+[21:51:48.666] INFO (63395): AppController {/}:
+    context: "RoutesResolver"
+[21:51:48.668] INFO (63395): Mapped {/hello, GET} route
+    context: "RouterExplorer"
+[21:51:48.668] INFO (63395): Mapped {/, GET} route
+    context: "RouterExplorer"
+[21:51:48.670] INFO (63395): Nest application successfully started
+    context: "NestApplication"

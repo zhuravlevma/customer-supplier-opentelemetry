@@ -12,6 +12,7 @@ scrape_configs:
     static_configs:
       - targets:
           - localhost
+          - http://supplier:9001
         labels:
           job: supplier
           __path__: /app/logs/supplier*.log
