@@ -11,8 +11,6 @@ export const loggerOptions: LoggerOptions = {
         .getSpan(context.active())
         ?.spanContext();
 
-      console.log({ ...object, spanId, traceId });
-
       return { ...object, spanId, traceId };
     },
   },

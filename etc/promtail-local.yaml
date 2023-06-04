@@ -68,16 +68,16 @@ scrape_configs:
       - multiline:
           firstline: '^\d{4}-\d{2}-\d{2}\s\d{1,2}\:\d{2}\:\d{2}\.\d{3}'
           max_wait_time: 3s
-  - job_name: customer1
+  - job_name: customer2
     static_configs:
       - targets:
           - localhost
         labels:
-          job: customer1
-          __path__: /app/logs/customer1*.log
+          job: customer2
+          __path__: /app/logs/customer2*.log
     pipeline_stages:
       - match:
-          selector: '{job="customer1"}'
+          selector: '{job="customer2"}'
           stages:
           - regex:
               expression: '^(?P<timestamp>\d{4}-\d{2}-\d{2}\s\d{1,2}\:\d{2}\:\d{2}\.\d{3})\s+(?P<level>[A-Z]{4,5})\s[(?P<serviceName>.*),(?P<traceId>.*),(?P<spanId>.*)]\s(?P<pid>\d)\s---\s[\s*(?P<thread>.*)]\s(?P<logger>.*)\s+\:\s(?P<message>.*)$'

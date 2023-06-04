@@ -1,4 +1,13 @@
 version: '3.8'
+
+# networks:
+#   vpcbr: # virtual network name
+#     driver: bridge
+#     ipam:
+#      config: # here, we define our ip space
+#        - subnet: 10.5.0.0/16
+#          gateway: 10.5.0.1
+
 services:
   # jaeger:
   #   image: jaegertracing/all-in-one:latest
@@ -23,7 +32,11 @@ services:
       - --config.file=/etc/prometheus.yaml
     ports:
       - "9090:9090"
-    hostname: prometheus
+    depends_on:
+      - nestjs-supplier
+      - nestjs-customer
+      - nestjs-customer2
+    restart: always
 
   nestjs-supplier:
     build:
@@ -105,6 +118,8 @@ services:
       - nestjs-customer
       - nestjs-customer2
       - loki
+    # networks:
+    #   vpcbr:
 
   tempo-query:
     image: grafana/tempo-query:latest
@@ -130,6 +145,10 @@ services:
     volumes:
       - ./etc/loki-local.yaml:/etc/loki/loki-local.yaml
       - ./data/loki-data:/tmp/loki
+    restart: always
+    # networks:
+    #   vpcbr: # this is the place where we assign the static ipv4 address
+    #     ipv4_address: 10.5.0.2
 
   volume_exporter:
     image: mnadeem/volume_exporter
@@ -142,7 +161,7 @@ services:
       - 9889:9888
 
   grafana:
-    image: grafana/grafana:latest
+    image: grafana/grafana:8.2.6-ubuntu
     volumes:
       - ./data/grafana-data/datasources:/etc/grafana/provisioning/datasources
       - ./data/grafana-data/dashboards-provisioning:/etc/grafana/provisioning/dashboards

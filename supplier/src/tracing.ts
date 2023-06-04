@@ -17,6 +17,7 @@ import { NestInstrumentation } from '@opentelemetry/instrumentation-nestjs-core'
 import { HttpInstrumentation } from '@opentelemetry/instrumentation-http';
 import { SemanticResourceAttributes } from '@opentelemetry/semantic-conventions';
 import { Resource } from '@opentelemetry/resources';
+import { ConsoleSpanExporter } from '@opentelemetry/sdk-trace-base';
 
 const otelSDK = new NodeSDK({
   resource: new Resource({
