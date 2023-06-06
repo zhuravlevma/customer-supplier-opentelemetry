@@ -1,28 +1,6 @@
 version: '3.8'
 
-# networks:
-#   vpcbr: # virtual network name
-#     driver: bridge
-#     ipam:
-#      config: # here, we define our ip space
-#        - subnet: 10.5.0.0/16
-#          gateway: 10.5.0.1
-
 services:
-  # jaeger:
-  #   image: jaegertracing/all-in-one:latest
-  #   ports:
-  #     - 6831:6831/udp
-  #     - 6832:6832/udp
-  #     - 16686:16686
-  #     - 5778:5778
-  #     - 4317:4317
-  #     - 4318:4318
-  #     - 14250:14250
-  #     - 14268:14268
-  #     - 14269:14269
-  #     - 9411:9411
-  #   hostname: jaeger
   prometheus:
     image: prom/prometheus:latest
     volumes:
@@ -36,7 +14,7 @@ services:
       - nestjs-supplier
       - nestjs-customer
       - nestjs-customer2
-    restart: always
+    restart: on-failure
 
   nestjs-supplier:
     build:
@@ -49,8 +27,8 @@ services:
       - ./data/logs:/app/logs
     depends_on:
       - kafka
-      - tempo-query
     restart: on-failure
+
   nestjs-customer:
     build:
       context: ./customer
@@ -64,8 +42,8 @@ services:
       - kafka
       - nestjs-supplier
       - nestjs-customer2
-      - tempo-query
     restart: on-failure
+
   nestjs-customer2:
     build:
       context: ./customer2
@@ -75,7 +53,6 @@ services:
       - 9466:9466
     depends_on:
       - kafka
-      - tempo-query
     volumes:
       - ./data/logs:/app/logs
     restart: on-failure
@@ -88,6 +65,7 @@ services:
       - "zookeeper_data:/bitnami"
     environment:
       - ALLOW_ANONYMOUS_LOGIN=yes
+    restart: on-failure
   kafka:
     image: docker.io/bitnami/kafka:3.4
     ports:
@@ -101,6 +79,7 @@ services:
       - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092
     depends_on:
       - zookeeper
+    restart: on-failure
 
   tempo:
     image: grafana/tempo:latest
@@ -116,6 +95,7 @@ services:
       - "16686"
       - "6831/udp"   # Jaeger - Thrift Compact
       - "6832/udp"   # Jaeger - Thrift Binary
+    restart: on-failure
 
   promtail:
     image: grafana/promtail:latest
@@ -128,8 +108,7 @@ services:
       - nestjs-customer
       - nestjs-customer2
       - loki
-    # networks:
-    #   vpcbr:
+    restart: on-failure
 
   tempo-query:
     image: grafana/tempo-query:latest
@@ -140,25 +119,23 @@ services:
       - "16686:16686"  # jaeger-ui
     depends_on:
       - tempo
+    restart: on-failure
 
   loki:
     image: grafana/loki:latest
     command: -config.file=/etc/loki/loki-local.yaml
     ports:
-      - "3101:3100"                                   # loki needs to be exposed so it receives logs
+      - "3101:3100"
     environment:
       - JAEGER_AGENT_HOST=tempo
-      - JAEGER_ENDPOINT=http://tempo:14268/api/traces # send traces to Tempo
+      - JAEGER_ENDPOINT=http://tempo:14268/api/traces
       - JAEGER_AGENT_PORT=14268
       - JAEGER_SAMPLER_TYPE=const
       - JAEGER_SAMPLER_PARAM=1
     volumes:
       - ./etc/loki-local.yaml:/etc/loki/loki-local.yaml
       - ./data/loki-data:/tmp/loki
-    restart: always
-    # networks:
-    #   vpcbr: # this is the place where we assign the static ipv4 address
-    #     ipv4_address: 10.5.0.2
+    restart: on-failure
 
   volume_exporter:
     image: mnadeem/volume_exporter
@@ -169,9 +146,10 @@ services:
       - ./data/loki-data:/tmp/loki
     ports:
       - 9889:9888
+    restart: on-failure
 
   grafana:
-    image: grafana/grafana:8.2.6-ubuntu
+    image: grafana/grafana:7.4.0-ubuntu
     volumes:
       - ./data/grafana-data/datasources:/etc/grafana/provisioning/datasources
       - ./data/grafana-data/dashboards-provisioning:/etc/grafana/provisioning/dashboards
@@ -184,9 +162,9 @@ services:
       - "3000:3000"
     depends_on:
       - prometheus
-      - tempo-query
       - loki
       - volume_exporter
+    restart: on-failure
 
 
 volumes:

@@ -37,6 +37,7 @@
     "@opentelemetry/instrumentation-pino": "^0.33.3",
     "@opentelemetry/resources": "^1.13.0",
     "@opentelemetry/sdk-node": "^0.39.1",
+    "@opentelemetry/sdk-trace-node": "^1.14.0",
     "@opentelemetry/semantic-conventions": "^1.13.0",
     "axios": "^1.4.0",
     "nestjs-otel": "^5.1.2",
