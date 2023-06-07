@@ -14,7 +14,7 @@ services:
 
   nestjs-supplier:
     build:
-      context: ./supplier
+      context: ./app/supplier
       dockerfile: ./Dockerfile
     ports:
       - 9001:9001
@@ -27,7 +27,7 @@ services:
 
   nestjs-customer:
     build:
-      context: ./customer
+      context: ./app/customer
       dockerfile: ./Dockerfile
     ports:
       - 4000:4000
@@ -41,7 +41,7 @@ services:
 
   nestjs-customer2:
     build:
-      context: ./customer2
+      context: ./app/customer2
       dockerfile: ./Dockerfile
     ports:
       - 9000:9000
