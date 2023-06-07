@@ -10,11 +10,7 @@ services:
       - --config.file=/etc/prometheus.yaml
     ports:
       - "9090:9090"
-    depends_on:
-      - nestjs-supplier
-      - nestjs-customer
-      - nestjs-customer2
-    restart: on-failure
+    restart: "no"
 
   nestjs-supplier:
     build:
@@ -27,7 +23,7 @@ services:
       - ./data/logs:/app/logs
     depends_on:
       - kafka
-    restart: on-failure
+    restart: "no"
 
   nestjs-customer:
     build:
@@ -41,8 +37,7 @@ services:
     depends_on:
       - kafka
       - nestjs-supplier
-      - nestjs-customer2
-    restart: on-failure
+    restart: "no"
 
   nestjs-customer2:
     build:
@@ -53,34 +48,36 @@ services:
       - 9466:9466
     depends_on:
       - kafka
+      - nestjs-customer
     volumes:
       - ./data/logs:/app/logs
     restart: on-failure
 
   zookeeper:
-    image: docker.io/bitnami/zookeeper:3.8
+    image: wurstmeister/zookeeper:latest
     ports:
       - "2181:2181"
-    volumes:
-      - "zookeeper_data:/bitnami"
     environment:
-      - ALLOW_ANONYMOUS_LOGIN=yes
-    restart: on-failure
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
   kafka:
-    image: docker.io/bitnami/kafka:3.4
+    image: wurstmeister/kafka:latest
     ports:
       - "9092:9092"
-    volumes:
-      - "kafka_data:/bitnami"
+    hostname: 'kafka'
     environment:
-      - ALLOW_PLAINTEXT_LISTENER=yes
-      - KAFKA_ENABLE_KRAFT=no
-      - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
-      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_LISTENERS: INTERNAL://0.0.0.0:9092,OUTSIDE://0.0.0.0:9094
+      KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka:9092,OUTSIDE://localhost:9094
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,OUTSIDE:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
     depends_on:
       - zookeeper
-    restart: on-failure
-
   tempo:
     image: grafana/tempo:latest
     command: ["-config.file=/etc/tempo.yaml"]
@@ -104,9 +101,9 @@ services:
       - ./etc/promtail-local.yaml:/etc/promtail/promtail-local.yaml
       - ./data/logs:/app/logs
     depends_on:
-      - nestjs-supplier
-      - nestjs-customer
-      - nestjs-customer2
+      # - nestjs-supplier
+      # - nestjs-customer
+      # - nestjs-customer2
       - loki
     restart: on-failure
 

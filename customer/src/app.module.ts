@@ -12,6 +12,9 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
           client: {
             clientId: 'customer',
             brokers: ['kafka:9092'],
+            retry: {
+              initialRetryTime: 30000,
+            },
           },
         },
       },
