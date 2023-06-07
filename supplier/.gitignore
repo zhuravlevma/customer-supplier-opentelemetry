@@ -33,8 +33,3 @@ lerna-debug.log*
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
-
-# App
-/data/tempo-data/
-/data/loki-data/
-/data/logs/
