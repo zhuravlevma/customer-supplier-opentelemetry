@@ -12,7 +12,7 @@ export class AppService {
     this.logger.info({ msg: 'Hello method', data: { message: greeting } });
     console.log('dwdw');
 
-    const { data } = await axios.get('http://nestjs-customer:4000/world');
+    const { data } = await axios.get('http://nestjs-accounting:4000/world');
     return `${greeting} ${data}`;
   }
 

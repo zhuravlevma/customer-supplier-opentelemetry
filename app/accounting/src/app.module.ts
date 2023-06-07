@@ -18,7 +18,7 @@ import { logger } from './pino';
         transport: Transport.KAFKA,
         options: {
           client: {
-            clientId: 'customer',
+            clientId: 'accounting',
             brokers: ['kafka:9092'],
             retry: {
               initialRetryTime: 30000,

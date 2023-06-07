@@ -8,17 +8,17 @@ target_config:
    sync_period: 10s
 
 scrape_configs:
-  - job_name: supplier
+  - job_name: warehouse
     static_configs:
       - targets:
           - localhost
-          - http://supplier:9001
+          - http://warehouse:9001
         labels:
-          job: supplier
-          __path__: /app/logs/supplier*.log
+          job: warehouse
+          __path__: /app/logs/warehouse*.log
     pipeline_stages:
       - match:
-          selector: '{job="supplier"}'
+          selector: '{job="warehouse"}'
           stages:
           - regex:
               expression: '^(?P<timestamp>\d{4}-\d{2}-\d{2}\s\d{1,2}\:\d{2}\:\d{2}\.\d{3})\s+(?P<level>[A-Z]{4,5})\s[(?P<serviceName>.*),(?P<traceId>.*),(?P<spanId>.*)]\s(?P<pid>\d)\s---\s[\s*(?P<thread>.*)]\s(?P<logger>.*)\s+\:\s(?P<message>.*)$'
@@ -39,16 +39,16 @@ scrape_configs:
       - multiline:
           firstline: '^\d{4}-\d{2}-\d{2}\s\d{1,2}\:\d{2}\:\d{2}\.\d{3}'
           max_wait_time: 3s
-  - job_name: customer
+  - job_name: accounting
     static_configs:
       - targets:
           - localhost
         labels:
-          job: customer
-          __path__: /app/logs/customer*.log
+          job: accounting
+          __path__: /app/logs/accounting*.log
     pipeline_stages:
       - match:
-          selector: '{job="customer"}'
+          selector: '{job="accounting"}'
           stages:
           - regex:
               expression: '^(?P<timestamp>\d{4}-\d{2}-\d{2}\s\d{1,2}\:\d{2}\:\d{2}\.\d{3})\s+(?P<level>[A-Z]{4,5})\s[(?P<serviceName>.*),(?P<traceId>.*),(?P<spanId>.*)]\s(?P<pid>\d)\s---\s[\s*(?P<thread>.*)]\s(?P<logger>.*)\s+\:\s(?P<message>.*)$'
@@ -69,16 +69,16 @@ scrape_configs:
       - multiline:
           firstline: '^\d{4}-\d{2}-\d{2}\s\d{1,2}\:\d{2}\:\d{2}\.\d{3}'
           max_wait_time: 3s
-  - job_name: customer2
+  - job_name: delivery
     static_configs:
       - targets:
           - localhost
         labels:
-          job: customer2
-          __path__: /app/logs/customer2*.log
+          job: delivery
+          __path__: /app/logs/delivery*.log
     pipeline_stages:
       - match:
-          selector: '{job="customer2"}'
+          selector: '{job="delivery"}'
           stages:
           - regex:
               expression: '^(?P<timestamp>\d{4}-\d{2}-\d{2}\s\d{1,2}\:\d{2}\:\d{2}\.\d{3})\s+(?P<level>[A-Z]{4,5})\s[(?P<serviceName>.*),(?P<traceId>.*),(?P<spanId>.*)]\s(?P<pid>\d)\s---\s[\s*(?P<thread>.*)]\s(?P<logger>.*)\s+\:\s(?P<message>.*)$'

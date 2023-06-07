@@ -14,7 +14,7 @@ import { HttpInstrumentation } from '@opentelemetry/instrumentation-http';
 
 const otelSDK = new NodeSDK({
   metricReader: new PrometheusExporter({ port: 9466 }),
-  serviceName: 'customer2',
+  serviceName: 'delivery',
   spanProcessor: new BatchSpanProcessor(
     new JaegerExporter({
       endpoint: 'http://tempo:14268/api/traces',

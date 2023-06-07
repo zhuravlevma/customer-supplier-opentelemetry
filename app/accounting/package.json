@@ -1,5 +1,5 @@
 {
-  "name": "customer",
+  "name": "accounting",
   "version": "0.0.1",
   "description": "",
   "author": "",
@@ -12,7 +12,7 @@
     "start": "nest start",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
-    "start:prod": "node dist/main | npx pino-tee info /app/logs/customer-info.log | tee -a /app/logs/customer.log",
+    "start:prod": "node dist/main | npx pino-tee info /app/logs/accounting.log | tee -a /app/logs/accounting.log",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "test": "jest",
     "test:watch": "jest --watch",

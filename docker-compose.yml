@@ -12,9 +12,9 @@ services:
       - "9090:9090"
     restart: "no"
 
-  nestjs-supplier:
+  nestjs-warehouse:
     build:
-      context: ./app/supplier
+      context: ./app/warehouse
       dockerfile: ./Dockerfile
     ports:
       - 9001:9001
@@ -25,9 +25,9 @@ services:
       - kafka
     restart: "no"
 
-  nestjs-customer:
+  nestjs-accounting:
     build:
-      context: ./app/customer
+      context: ./app/accounting
       dockerfile: ./Dockerfile
     ports:
       - 4000:4000
@@ -36,19 +36,19 @@ services:
       - ./data/logs:/app/logs
     depends_on:
       - kafka
-      - nestjs-supplier
+      - nestjs-warehouse
     restart: "no"
 
-  nestjs-customer2:
+  nestjs-delivery:
     build:
-      context: ./app/customer2
+      context: ./app/delivery
       dockerfile: ./Dockerfile
     ports:
       - 9000:9000
       - 9466:9466
     depends_on:
       - kafka
-      - nestjs-customer
+      - nestjs-accounting
     volumes:
       - ./data/logs:/app/logs
     restart: on-failure
@@ -101,9 +101,6 @@ services:
       - ./etc/promtail-local.yaml:/etc/promtail/promtail-local.yaml
       - ./data/logs:/app/logs
     depends_on:
-      # - nestjs-supplier
-      # - nestjs-customer
-      # - nestjs-customer2
       - loki
     restart: on-failure
 

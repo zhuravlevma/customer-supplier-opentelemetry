@@ -7,20 +7,20 @@ scrape_configs:
     static_configs:
     - targets: ['localhost:9090']
 
-  - job_name: 'nestjs-supplier-api'
+  - job_name: 'nestjs-warehouse-api'
     metrics_path: /metrics
     static_configs:
-    - targets: ['nestjs-supplier:9464']
+    - targets: ['nestjs-warehouse:9464']
 
-  - job_name: 'nestjs-customer-api'
+  - job_name: 'nestjs-accounting-api'
     metrics_path: /metrics
     static_configs:
-    - targets: ['nestjs-customer:9465']
+    - targets: ['nestjs-accounting:9465']
 
-  - job_name: 'nestjs-customer2-api'
+  - job_name: 'nestjs-delivery-api'
     metrics_path: /metrics
     static_configs:
-    - targets: ['nestjs-customer2:9466']
+    - targets: ['nestjs-delivery:9466']
 
   - job_name: 'volume_exporter'
     metrics_path: /metrics
