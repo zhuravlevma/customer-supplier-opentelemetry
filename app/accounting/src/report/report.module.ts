@@ -1,8 +1,9 @@
 import { Module } from '@nestjs/common';
+import { ReportController } from './report.controller';
+import { ReportService } from './domain/report.service';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { LoggerModule as PinoLoggerModule } from 'nestjs-pino';
-import { logger } from './pino';
-import { ReportModule } from './report/report.module';
+import { logger } from 'src/pino';
 
 @Module({
   imports: [
@@ -26,7 +27,8 @@ import { ReportModule } from './report/report.module';
         },
       },
     ]),
-    ReportModule,
   ],
+  controllers: [ReportController],
+  providers: [ReportService],
 })
-export class AppModule {}
+export class ReportModule {}

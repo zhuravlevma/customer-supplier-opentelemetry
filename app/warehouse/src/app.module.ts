@@ -1,8 +1,7 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { logger } from './pino';
 import { LoggerModule as PinoLoggerModule } from 'nestjs-pino';
+import { WarehouseModule } from './warehouse/warehouse.module';
 @Module({
   imports: [
     PinoLoggerModule.forRoot({
@@ -10,8 +9,7 @@ import { LoggerModule as PinoLoggerModule } from 'nestjs-pino';
         logger: logger,
       },
     }),
+    WarehouseModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
 })
 export class AppModule {}

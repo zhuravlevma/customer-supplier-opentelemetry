@@ -1,8 +1,7 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { LoggerModule as PinoLoggerModule } from 'nestjs-pino';
 import { logger } from './pino';
+import { OrderModule } from './order/order.module';
 
 @Module({
   imports: [
@@ -11,8 +10,7 @@ import { logger } from './pino';
         logger: logger,
       },
     }),
+    OrderModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
 })
 export class AppModule {}
