@@ -1,10 +1,5 @@
 import { Controller } from '@nestjs/common';
-import {
-  Ctx,
-  KafkaContext,
-  MessagePattern,
-  Payload,
-} from '@nestjs/microservices';
+import { MessagePattern, Payload } from '@nestjs/microservices';
 import { OrderValidatedDto } from './dtos/report.validated.dto';
 import { OrderService } from './domain/order.service';
 import { Logger } from 'nestjs-pino';
