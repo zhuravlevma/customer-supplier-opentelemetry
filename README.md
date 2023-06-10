@@ -7,7 +7,7 @@
 docker compose up
 ```
 
-### Call
+### Postman
 
 ![image](https://github.com/zhuravlevma/customer-supplier-opentelemetry/assets/44276887/64d91415-e283-4ec2-a721-8eaf077a964e)
 
